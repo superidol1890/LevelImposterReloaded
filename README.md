@@ -75,8 +75,8 @@ Don\'t see a compatible mod here? Create a [Pull Request](https://github.com/sup
 For more information or guides on making your own map, view our [documentation](https://docs.levelimposter.net/).
 
 ## Support
-- **Discord:** https://discord.gg/9jJEBQ4qJs
-- **Issues:** https://github.com/DigiWorm0/LevelImposter/issues
+- [**Discord**](https://discord.gg/9jJEBQ4qJs)
+- [**Issues**](superidol1890/LevelImposterReloaded)
 
 ## Building:
 
