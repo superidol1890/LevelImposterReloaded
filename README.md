@@ -92,7 +92,6 @@ For more information or guides on making your own map, view our [documentation](
 [Among Us Mod](https://github.com/superidol1890/LevelImposterReloaded) (superidol1890/LevelImposterReloaded)\
 [Web Editor](https://github.com/DigiWorm0/LevelImposter-Editor) (DigiWorm0/LevelImposter-Editor)\
 [Main Website](https://github.com/DigiWorm0/LevelImposter-Web) (DigiWorm0/LevelImposter-Web)\
-[Documentation](https://github.com/DigiWorm0/LevelImposter-Docs) (DigiWorm0/LevelImposter-Docs)
 
 2. Create a feature branch
 ```
