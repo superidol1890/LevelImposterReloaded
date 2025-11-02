@@ -21,17 +21,17 @@ Custom Among Us Mapping Studio
 
 <hr />
 <p align="center">
-	<a href="https://github.com/DigiWorm0/LevelImposter/releases">
+	<a href="https://github.com/superidol1890/LevelImposterReloaded/releases">
 		<img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/DigiWorm0/LevelImposter/total">
 	</a>
 	<a href="https://www.curseforge.com/among-us/all-mods/levelimposter">
 		<img alt="Curseforge Downloads" src="https://cf.way2muchnoise.eu/full_700669_downloads.svg">
 	</a>
-	<a href="https://github.com/DigiWorm0/LevelImposter/releases/latest">
-		<img alt="Latest GitHub Release" src="https://img.shields.io/github/v/release/DigiWorm0/LevelImposter?include_prereleases">
+	<a href="https://github.com/superidol1890/LevelImposterReloaded/releases/latest">
+		<img alt="Latest GitHub Release" src="https://img.shields.io/github/v/release/superidol1890/LevelImposterReloaded?include_prereleases">
 	</a>
-	<a href="https://github.com/DigiWorm0/LevelImposter/blob/master/LICENSE.md">
-		<img alt="GitHub License" src="https://img.shields.io/github/license/DigiWorm0/LevelImposter">
+	<a href="https://github.com/superidol1890/LevelImposterReloaded/blob/master/LICENSE.md">
+		<img alt="GitHub License" src="https://img.shields.io/github/license/superidol1890/LevelImposterReloaded">
 	</a>
 	<a href="https://levelimposter.net/">
 		<img alt="Uptime" src="https://betteruptime.com/status-badges/v1/monitor/h05m.svg">
