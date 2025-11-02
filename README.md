@@ -56,18 +56,18 @@ Custom Among Us Mapping Studio
 ## Mod Compatibility
 | Mod | Support | Notes |
 |:-:|:-:|:-:|
-| [BetterCrewLink](https://github.com/OhMyGuus/BetterCrewLink) | ✅ | No wall detection |
-| [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | ✅ |  |
-| [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ✅ |  |
-| [Town of Us Reworked](https://github.com/AlchlcDvl/TownOfUsReworked) | ⚠️ | Mod is in early beta |
-| [Stellar Roles](https://github.com/Mr-Fluuff/StellarRolesAU) | ✅ |  |
-| [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ⚠️ | Some minor visual bugs |
+| [BetterCrewLink](https://github.com/OhMyGuus/BetterCrewLink) | ✅ |
+| [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | ⚠️ | Mod is outdated |
+| [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ⚠️ | Mod is outdated |
+| [Town of Us Reworked](https://github.com/AlchlcDvl/TownOfUsReworked) | ⚠️ | Mod is outdated |
+| [Stellar Roles](https://github.com/Mr-Fluuff/StellarRolesAU) | ⚠️ | Mod is outdated |
+| [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ✅ |  |
 
-Don\'t see a compatible mod here? Create a [Pull Request](https://github.com/DigiWorm0/LevelImposter/pulls)!
+Don\'t see a compatible mod here? Create a [Pull Request](https://github.com/superidol1890/LevelImposterReloaded/pulls)!
 
 ## Installation
 
-1. Download `LevelImposter.zip` from the [latest release](https://github.com/DigiWorm0/LevelImposter/releases/latest)
+1. Download `LevelImposter.zip` from the [latest release](https://github.com/superidol1890/LevelImposterReloaded/releases/latest)
 2. Extract the contents of the zip to the root folder of your Among Us
 3. Open Among Us *(It will take a couple minutes during the first launch)*
 4. Select `Maps` on the Main Menu
@@ -89,7 +89,7 @@ For more information or guides on making your own map, view our [documentation](
 
 ## Contributing
 1. Create a fork of the correct repository\
-[Among Us Mod](https://github.com/DigiWorm0/LevelImposter) (DigiWorm0/LevelImposter)\
+[Among Us Mod](https://github.com/superidol1890/LevelImposterReloaded) (superidol1890/LevelImposterReloaded)\
 [Web Editor](https://github.com/DigiWorm0/LevelImposter-Editor) (DigiWorm0/LevelImposter-Editor)\
 [Main Website](https://github.com/DigiWorm0/LevelImposter-Web) (DigiWorm0/LevelImposter-Web)\
 [Documentation](https://github.com/DigiWorm0/LevelImposter-Docs) (DigiWorm0/LevelImposter-Docs)
@@ -109,7 +109,7 @@ git commit -am 'Added some really cool features'
 git push feature/cool-feature
 ```
 
-5. Create a [Pull Request](https://github.com/DigiWorm0/LevelImposter/pulls)
+5. Create a [Pull Request](https://github.com/superidol1890/LevelImposterReloaded/pulls)
 
 ## Credits
 
