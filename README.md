@@ -58,7 +58,7 @@ Custom Among Us Mapping Studio
 |:-:|:-:|:-:|
 | [BetterCrewLink](https://github.com/OhMyGuus/BetterCrewLink) | ✅ |
 | [The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles) | ⚠️ | Mod is outdated |
-| [Town of Us-R](https://github.com/eDonnes124/Town-Of-Us-R) | ⚠️ | Mod is outdated |
+| [Town of Us Mira](https://github.com/AU-Avengers/TOU-Mira) | ✅ | |
 | [Town of Us Reworked](https://github.com/AlchlcDvl/TownOfUsReworked) | ⚠️ | Mod is outdated |
 | [Stellar Roles](https://github.com/Mr-Fluuff/StellarRolesAU) | ⚠️ | Mod is outdated |
 | [Submerged](https://github.com/SubmergedAmongUs/Submerged) | ✅ |  |
@@ -114,6 +114,7 @@ git push feature/cool-feature
 
 ### Contributors
 [Digi#0069](https://github.com/DigiWorm0) - Lead Developer\
+[Super Idol](https://github.com/superidol1890) - maintainer of mod
 [PAF_huier_cn#8777](https://github.com/MC-AS-Huier) - Simplified Chinese Translation\
 [PalmForest#1404](https://github.com/RealPalmForest) - Russian Translation\
 [miniduikboot](https://github.com/miniduikboot) - Owns/Maintains Modded Servers
