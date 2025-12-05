@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Buffers;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using Il2CppInterop.Runtime.Attributes;
 using LevelImposter.Core;
@@ -8,75 +8,35 @@ using UnityEngine;
 
 namespace LevelImposter.AssetLoader;
 
-public class DDSLoader
+public static class DDSLoader
 {
-    private const int DDS_HEADER_SIZE = 128;
+    /// <summary>
+    /// Unity only supports reading the texture data starting from byte offset 128.
+    /// Data before this is the DDS header.
+    /// </summary>
+    private const int DDS_TEXTURE_OFFSET = 128;
     private const int DDS_PIXEL_FORMAT_SIZE = 32;
 
     /// <summary>
-    ///     We must read the entire file into memory to process it.
-    ///     We can use a shared ArrayPool to avoid excessive memory allocations.
+    ///     Loads a DDS (DirectDraw Surface) image from a loadable.
     /// </summary>
-    private static ArrayPool<byte> BytePool => ArrayPool<byte>.Shared;
-
-    /// <summary>
-    ///     Loads a DDS (DirectDraw Surface) image from a stream.
-    /// </summary>
-    /// <param name="imgStream">Raw DDS file stream</param>
-    /// <param name="loadable">Sprite options to apply</param>
-    /// <returns>A still UnityEngine.Sprite containing the image data</returns>
+    /// <param name="loadable">Loadable texture</param>
+    /// <returns>A still UnityEngine.Texture2D containing the image data</returns>
     /// <exception cref="IOException">If the Stream fails to read image data</exception>
-    public static LoadedSprite Load(Stream imgStream, LoadableSprite loadable)
+    public static LoadedTexture Load(LoadableTexture loadable)
     {
-        // Before we do anything, rent buffers for reading the DDS header and texture data
-        var textureDataLength = (int)imgStream.Length - DDS_HEADER_SIZE;
-        var headerData = BytePool.Rent(DDS_HEADER_SIZE);
-        var imageDataBuffer = BytePool.Rent(textureDataLength);
+        // Rent buffers from the pool
+        using var imgData = loadable.DataStore.LoadToMemory();
 
-        // Ensure we return the rented buffers in case of an exception
-        try
-        {
-            // Read DDS Header
-            var readBytes = imgStream.Read(headerData, 0, DDS_HEADER_SIZE);
-            if (readBytes != DDS_HEADER_SIZE)
-                throw new IOException("Failed to read DDS header data");
+        // Create Texture
+        var texture = ImageDataToTexture2D(
+            imgData.Get(),
+            loadable.ID,
+            loadable.Options
+        );
 
-            // Read Texture Data
-            readBytes = imgStream.Read(imageDataBuffer, 0, textureDataLength);
-            if (readBytes != textureDataLength)
-                throw new IOException("Failed to read all image data");
-
-            // Get Options
-            var options = loadable.Options;
-
-            // Create Texture
-            var sprite = ImageDataToSprite(
-                headerData,
-                imageDataBuffer,
-                loadable.ID,
-                options.Pivot,
-                options.PixelArt
-            );
-
-            // Return the rented buffers
-            BytePool.Return(headerData);
-            BytePool.Return(imageDataBuffer);
-
-            // Register in GC
-            GCHandler.Register(sprite);
-
-            // Create Loaded Sprite
-            return new LoadedSprite(sprite);
-        }
-        catch
-        {
-            // If any exception occurs, return the rented buffers to the pool
-            BytePool.Return(headerData);
-            BytePool.Return(imageDataBuffer);
-
-            // Re-throw the exception to be handled by the caller
-            throw;
-        }
+        // Return the created texture
+        return new LoadedTexture(texture);
     }
 
     /// <summary>
@@ -115,73 +75,70 @@ public class DDSLoader
     /// <returns>True if the stream is a valid DDS file, otherwise false.</returns>
     public static bool IsDDS(Stream dataStream)
     {
-        using (var reader = new BinaryReader(dataStream, Encoding.ASCII, true))
+        if (!dataStream.CanSeek)
+            throw new Exception("Stream must be seekable to check for DDS format");
+        
+        using var reader = new BinaryReader(dataStream, Encoding.ASCII, true);
+        
+        try
         {
-            try
-            {
-                // Read Header
-                var header = reader.ReadBytes(4);
-                if (header.Length != 4)
-                    return false;
-                reader.BaseStream.Position = 0;
-
-                // Check for DDS magic number
-                return header[0] == 'D' && header[1] == 'D' && header[2] == 'S' && header[3] == ' ';
-            }
-
-            catch
-            {
+            // Read Header
+            var header = reader.ReadBytes(4);
+            if (header.Length != 4)
                 return false;
-            }
+            reader.BaseStream.Position = 0;
+
+            // Check for DDS magic number
+            return header[0] == 'D' && header[1] == 'D' && header[2] == 'S' && header[3] == ' ';
+        }
+        catch
+        {
+            return false;
         }
     }
 
     /// <summary>
-    ///     Converts raw DDS (DirectDraw Surface) bytes to a still sprite.
+    ///     Converts raw DDS (DirectDraw Surface) bytes to a still Texture2D.
     ///     <para>
     ///         This is a relatively expensive operation and must be done on the main Unity thread.
-    ///         Texture data is removed from CPU memory making the resulting Sprite non-readable.
+    ///         Texture data is removed from CPU memory making the resulting texture non-readable.
     ///     </para>
     /// </summary>
-    /// <param name="headerData">DDS header data in within IL2CPP memory</param>
-    /// <param name="textureData">Raw texture data in within IL2CPP memory</param>
-    /// <param name="name">Name of the resulting sprite objects</param>
-    /// <param name="pivot">Pivots the sprite by a Vector2. (Default: 0.5f, 0.5f)</param>
-    /// <param name="isPixelArt">Whether the image is pixel art or not. Disables Bilinear filtering. (Default: false)</param>
-    /// <returns>A Unity Sprite containing the resulting image data</returns>
+    /// <param name="textureData">Raw texture data in within memory</param>
+    /// <param name="name">Name of the resulting texture object</param>
+    /// <param name="options">Texture options to apply</param>
+    /// <returns>A Unity Texture2D containing the resulting image data</returns>
     [HideFromIl2Cpp]
-    public static Sprite ImageDataToSprite(
-        byte[] headerData,
+    private static Texture2D ImageDataToTexture2D(
         byte[] textureData,
-        string name = "CustomSprite",
-        Vector2? pivot = null,
-        bool isPixelArt = false)
+        string name = "CustomTexture",
+        LoadableTexture.TextureOptions? options = null)
     {
         // Check the first 4 bytes for DDS magic number
-        if (headerData.Length < 4 ||
-            headerData[0] != 'D' ||
-            headerData[1] != 'D' ||
-            headerData[2] != 'S' ||
-            headerData[3] != ' ')
+        if (textureData.Length < 4 ||
+            textureData[0] != 'D' ||
+            textureData[1] != 'D' ||
+            textureData[2] != 'S' ||
+            textureData[3] != ' ')
             throw new Exception("Invalid DDS texture. Unable to read");
 
         // Check if the header size is correct
-        var headerSize = ReadDword(headerData, 4);
-        if (headerSize != DDS_HEADER_SIZE - 4) // Subtract 4 for storing the size itself
+        var headerSize = ReadDword(textureData, 4);
+        if (headerSize != 124) // Subtract 4 for storing the size itself
             throw new Exception("Invalid DDS header size. Expected 124 bytes.");
 
         // DDS Header Fields
-        var imgHeight = ReadDword(headerData, 12);
-        var imgWidth = ReadDword(headerData, 16);
-        var mipMapCount = ReadDword(headerData, 28);
+        var imgHeight = ReadDword(textureData, 12);
+        var imgWidth = ReadDword(textureData, 16);
+        var mipMapCount = ReadDword(textureData, 28);
 
         // Pixel Format
-        var pixelFormatSize = ReadDword(headerData, 76);
+        var pixelFormatSize = ReadDword(textureData, 76);
         if (pixelFormatSize != DDS_PIXEL_FORMAT_SIZE)
             throw new Exception("Invalid DDS pixel format size. Expected 32 bytes.");
 
         // FourCC Code
-        var fourCharacterCode = ReadDword(headerData, 84);
+        var fourCharacterCode = ReadDword(textureData, 84);
 
         // Build texture from DXT data
         var textureFormat = CharacterCodeToTextureFormat(fourCharacterCode);
@@ -193,29 +150,37 @@ public class DDSLoader
         {
             name = $"{name}_tex",
             wrapMode = TextureWrapMode.Clamp,
-            filterMode = isPixelArt ? FilterMode.Point : FilterMode.Bilinear,
+            filterMode = options?.PixelArt ?? false ? FilterMode.Point : FilterMode.Bilinear,
             hideFlags = HideFlags.HideAndDontSave,
             requestedMipmapLevel = 0
         };
-        texture.LoadRawTextureData(textureData);
+        
+        // Get pointer to texture data 
+        // (This avoids duplicating the texture data in memory)
+        var handle = GCHandle.Alloc(textureData, GCHandleType.Pinned);
+        try {
+            // Make sure pointer is offset by 128 bytes to skip DDS header
+            var basePtr = handle.AddrOfPinnedObject();
+            var textureDataPtr = IntPtr.Add(basePtr, DDS_TEXTURE_OFFSET);
+            var textureDataSize = textureData.Length - DDS_TEXTURE_OFFSET;
+            
+            // Load texture data from pointer
+            texture.LoadRawTextureData(textureDataPtr, textureDataSize);
+        }
+        finally
+        {
+            // Ensure we always free the handle
+            // (Even if LoadRawTextureData throws an exception)
+            handle.Free();
+        }
 
-        // Remove from CPU Memory
+        // Remove texture data from CPU memory
         texture.Apply(false, true);
-
-        // Generate Sprite
-        var sprite = Sprite.Create(
-            texture,
-            new Rect(0, 0, imgWidth, imgHeight),
-            pivot ?? new Vector2(0.5f, 0.5f),
-            100.0f,
-            0,
-            SpriteMeshType.FullRect
-        );
-
-        // Set Sprite Flags
-        sprite.name = $"{name}_sprite";
-        sprite.hideFlags = HideFlags.DontUnloadUnusedAsset;
-
-        return sprite;
+        
+        // Register in GC
+        if (options?.AddToGC ?? true)
+            GCHandler.Register(texture);
+        
+        return texture;
     }
 }
