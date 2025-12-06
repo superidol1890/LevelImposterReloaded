@@ -1,3 +1,5 @@
+# Note : This repo is in beta and is highly unstable. It will constantly get updates and many bug fixes.
+
 > ## ⚠️ WARNING:
 > LevelImposter is still in **early beta**. If you run into any bugs or issues, don\'t hesitate to report them in our [Discord](https://discord.gg/9jJEBQ4qJs).
 
